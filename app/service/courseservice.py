@@ -7,8 +7,9 @@ from typing import Optional, List
 import json, os
 from dotenv import load_dotenv
 
-# URL to run -> http://localhost:8000/docs which opens the Swagger API documentation
-# Run Uvicorn - uvicorn main:app --reload
+# To run use the below command from the same directory which has courseservice.py
+# uvicorn courseservice:app --port 8081 --reload 
+# The Swagger API documentation is hosted at http://localhost:8081/docs 
 
 Base = declarative_base()
 class Course(Base):
@@ -50,7 +51,7 @@ session = Session()
 @app.get('/courses')
 def getAllCourses(response: Response):
     courses = session.query(Course).all()
-    print(len(courses))
+    
     if len(courses) == 0: #No courses exists return appropraite HTTPS response
         response.status_code = status.HTTP_200_OK
         retString = "No courses exists in the course database"
@@ -65,7 +66,7 @@ def getAllCourses(response: Response):
 def get_course(u_id: int, response: Response):
     courses = session.query(Course).filter(Course.id == u_id).all()
     if len(courses) == 0:
-        response.status_code = status.HTTP_404_NOT_FOUND #Todo test after delete
+        response.status_code = status.HTTP_404_NOT_FOUND 
         retString = "Course with id " + str(u_id) + " does not exists in course database"
         json_string = '{"message": "' + retString + '"}'
         return json.loads(json_string)

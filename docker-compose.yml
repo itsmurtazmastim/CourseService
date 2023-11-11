@@ -1,15 +1,25 @@
 version: "3.8"
+
 services:
   app:
     build: ./app/
     ports:
-     - 8081:8081
+      - 8081:8081
     networks:
-        - course_reg_nw
+      - course_reg_nw
+    depends_on:
+      - coursedb
+
   coursedb:
-    build: ./database/
+    image: postgres:latest
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    ports:
+      - 5432:5432
     networks:
-        - course_reg_nw
+      - course_reg_nw
+
 networks:
-   course_reg_nw:
-      driver: bridge
+  course_reg_nw:
+    driver: bridge

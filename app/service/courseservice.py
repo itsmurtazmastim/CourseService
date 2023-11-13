@@ -90,6 +90,7 @@ def delete_course(u_id: int):
             json_string = '{"message": "' + retString + '"}'
             return json.loads(json_string)
     except:
+        session.rollback()
         print('Exception occurred while deleting the course')
 
 @app.put('/courses/{u_id}', status_code=202)
@@ -108,10 +109,15 @@ def update_course(u_id: int, courseObj: CourseSchema, response: Response):
         category=courseObj.category,
         description=courseObj.description
         )
-        session.query(Course).filter(Course.id == u_id).update({Course.name:new_course.name, 
-        Course.duration_in_weeks:new_course.duration_in_weeks, Course.category:new_course.category, Course.description:new_course.description})
-        session.commit()
-        return CourseSchema.from_orm(new_course)
+        try:
+            session.query(Course).filter(Course.id == u_id).update({Course.name:new_course.name, 
+            Course.duration_in_weeks:new_course.duration_in_weeks, Course.category:new_course.category, Course.description:new_course.description})
+            session.commit()
+            return CourseSchema.from_orm(new_course)
+        except Exception:
+            session.rollback()
+            print("Exception Occured")
+            return "Unable to add duplicate values"
 
 @app.post('/courses', status_code=201)
 def new_course(courseObj: CourseSchema):
@@ -139,6 +145,7 @@ def new_course(courseObj: CourseSchema):
         return CourseSchema.from_orm(new_course)
     
     except exc.IntegrityError:
+        session.rollback()
         print("Exception Occured")
         return "Unable to add duplicate values"
 

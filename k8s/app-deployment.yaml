@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: courseapp-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: courseapp
+  template:
+    metadata:
+      labels:
+        app: courseapp
+    spec:
+      containers:
+      - name: courseapp
+        image: vanidevilekkala/scalable-services:courseservice-app-v1 
+        ports:
+        - containerPort: 8081  # Replace with the port your app service is listening on
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: course-service
+spec:
+  selector:
+    app: courseapp
+  ports:
+    - protocol: TCP
+      port: 8081
+      targetPort: 8081
+  type: NodePort

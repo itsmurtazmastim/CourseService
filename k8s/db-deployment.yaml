@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: coursedb-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: coursedbapp
+  template:
+    metadata:
+      labels:
+        app: coursedbapp
+    spec:
+      containers:
+      - name: coursedbapp
+        image: vanidevilekkala/scalable-services:courseservice-db-v1
+          # itsmurtaz/scalable_service_assignment:userservice-db
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: coursedb
+spec:
+  selector:
+    app: coursedbapp
+  ports:
+    - protocol: TCP
+      port: 5432
+      targetPort: 5432
+
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: postgres-config
+  namespace: default
+  labels:
+    app: coursedbapp
+data:
+  POSTGRES_DB: courseservice
+  POSTGRES_USER: postgres
+  POSTGRES_PASSWORD: postgres

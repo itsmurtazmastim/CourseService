@@ -1,8 +1,27 @@
 version: "3.8"
+
 services:
-  coursedb:
-    build: ./database/
+<<<<<<< HEAD
+=======
+  app:
+    build: ./app/
+    ports:
+      - 8081:8081
     networks:
+      - course_reg_nw
+    depends_on:
+      - coursedb
+
+>>>>>>> a370d7b534c76dce922b3bdcde3d9755981b1b9d
+  coursedb:
+    image: postgres:latest
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    ports:
+      - 5432:5432
+    networks:
+<<<<<<< HEAD
         - course_reg_nw
   course-service:
     build: ./app/
@@ -17,3 +36,10 @@ networks:
    course_reg_nw:
     name: course_reg_nw
     external: true
+=======
+      - course_reg_nw
+
+networks:
+  course_reg_nw:
+    driver: bridge
+>>>>>>> a370d7b534c76dce922b3bdcde3d9755981b1b9d
